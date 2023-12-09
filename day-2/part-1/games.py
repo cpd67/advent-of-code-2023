@@ -13,11 +13,11 @@ def check_cube_constraint(cube_str):
         raise InvalidCubeConfiguration()
 
 
-if __name__ == "__main__":
-    with open("../list-of-games.txt") as games:
+if __name__ == '__main__':
+    with open('../list-of-games.txt') as games:
         id_sum = 0
         for game in games:
-            game_id, cube_subsets = game.split(":")
+            game_id, cube_subsets = game.split(':')
             try:
                 for cube_subset in cube_subsets.split(';'):
                     for cube in cube_subset.split(','):
@@ -26,4 +26,4 @@ if __name__ == "__main__":
                 id_sum += int(game_id.split(' ')[1])
             except InvalidCubeConfiguration:
                 pass
-        print(f"Done! The sum is: {id_sum}")
+        print(f'Done! The sum is: {id_sum}')

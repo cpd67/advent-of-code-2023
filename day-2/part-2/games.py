@@ -16,4 +16,4 @@ if __name__ == '__main__':
             # to play this game. Anything lower and we'd have an invalid game.
             # Increment the power sum.
             power_sum += (fewest_cube_values['red'] * fewest_cube_values['blue'] * fewest_cube_values['green'])
-        print(f"Done! The sum is: {power_sum}")
+        print(f'Done! The sum is: {power_sum}')
