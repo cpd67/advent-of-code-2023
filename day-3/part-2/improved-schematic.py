@@ -1,3 +1,4 @@
+# TODO clean this up
 def is_special_char_adjacent(adjacent_chars):
     """
     Determine if there are any special characters adjacent to a 
@@ -14,7 +15,7 @@ if __name__ == "__main__":
     with open('../engine-schematic.txt') as schematic:
         schematic_lines = list(schematic)
         total_line_count = len(schematic_lines)
-        part_number_sum = 0
+        gear_coordinates = {}
         for line_idx, schematic_line in enumerate(schematic_lines):
             # Strip whitespace from the line, keep track of the length of the line
             # and the previous & next line indexes, as well as the part number digits
@@ -29,6 +30,9 @@ if __name__ == "__main__":
                 if char.isdigit():
                     # Append the char to our current possible part number
                     possible_part_number += char
+                elif char == "*":
+                    gear_coordinates.setdefault((line_idx, char_idx), [])
+                
                 if (char == '.' or not char.isdigit() or char_idx == (schematic_line_length - 1)) and possible_part_number:
                     # We've found a full possible part number.
                     # Check adjacent characters and see if any of them
@@ -46,8 +50,24 @@ if __name__ == "__main__":
                         adjacent_chars['next'] = schematic_lines[next_line_idx][prev_char_idx:next_char_idx]
 
                     if is_special_char_adjacent(adjacent_chars):
-                        part_number_sum += int(possible_part_number)
+                        part_number = int(possible_part_number)
+                        if adjacent_chars['prev']:
+                            for offset, c in enumerate(adjacent_chars['prev']):
+                                if c == "*":
+                                    gear_coordinates.setdefault((prev_line_idx, prev_char_idx + offset), []).append(part_number)
+                        if adjacent_chars['left'] == "*":
+                            gear_coordinates.setdefault((line_idx, prev_char_idx), []).append(part_number)
+                        if adjacent_chars['right'] == "*":
+                            gear_coordinates.setdefault((line_idx, char_idx), []).append(part_number)
+                        if adjacent_chars['next']:
+                            for offset, c in enumerate(adjacent_chars['next']):
+                                if c == "*":
+                                    gear_coordinates.setdefault((next_line_idx, prev_char_idx + offset), []).append(part_number)
 
                     possible_part_number = ''
                     adjacent_chars = {"prev": "", "left": "", "right": "", "next": ""}
-        print(f'Done! The part number sum is: {part_number_sum}')
+        gear_ratio_sum = 0
+        for part_numbers in gear_coordinates.values():
+            if len(part_numbers) == 2:
+                gear_ratio_sum += (part_numbers[0] * part_numbers[1])
+        print(f'Done! The part number sum is: {gear_ratio_sum}')
